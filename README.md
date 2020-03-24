@@ -1,76 +1,64 @@
-# Happyorg
+### How to run
+Just execute the build script in `scripts`:
 
-This project was generated using [Nx](https://nx.dev).
+```
+$ node scripts/build-gatsby
+``` 
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/nx-logo.png" width="450"></p>
+### Findings
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+- The `directory` property of the `program` argument passed to the `build` command should have the path to the gatsby app inside the workspace:
 
-## Adding capabilities to your workspace
+```
+const program = { ... };
+program.directory = 'D:\\playground\\happyorg\\apps\\gatsbyapp';
+const build = require('gatsby/dist/commands/build');
+build(program);
+```
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+- `package.json` specific to gatsby app should be placed  inside the `gatsbyapp` directory
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+- `node_modules\gatsby\cache-dir\static-entry.js` uses process.cwd() a lot, 
+needs to be replaced with the path to the gatsby app (possibly using program.directory if available):
 
-Below are some plugins which you can add to your workspace:
+```
+const cwdDirectory = "D:\\playground\\happyorg\\apps\\gatsbyapp";
+...
+fs.readFileSync(`${cwdDirectory}/public/webpack.stats.json`, `utf-8`)
+...
+const absolutePageDataPath = join(cwdDirectory, `public`, pageDataPath)
+...
+const pageDataFile = join(cwdDirectory, `public`, pageDataPath)
+...
+``` 
+ 
+- `node_modules/babel-plugin-remove-graphql-queries/index.js` uses `process.cwd()`,
+needs to be replaced with the path to the gatsby app using `program.directory`:
+   
+```
+// const resultPath = nodePath.join(process.cwd(), shortResultPath);
+const resultPath = nodePath.join(program.directory, shortResultPath);
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+```
+   
+- Environment variable `process.env.NODE_ENV` should be set to `production` in `scripts/gatsby-build.js`:
 
-## Generate an application
+```
+process.env.NODE_ENV = `production`
+```
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+### Current problems
 
-> You can use any of the plugins above to generate applications as well.
+- Gatsby generates `.cache` directory during the build inside the `apps/gatsbyapp` folder. 
+However, some parts of the system, expect to find it in the root directory and fail with the error:
+> "Cannot find module 'D:\playground\happyorg\.cache\babelState.json'"
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+If the directory `.cache` copied to the root, the build successfully goes past that stage.
 
-## Generate a library
+- Currently the error that prevents the build outputs the following message:
+> Can't resolve '..\..\..\..\public\static\d\2417117884.json' in 'absolute\path\to\happyorg\apps\gatsbyapp\src\components'
+> Can't resolve '..\..\..\..\public\static\d\2969191536.json' in 'absolute\path\to\happyorg\apps\gatsbyapp\src\components'
+> ...
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+These files are generated during the build and are available inside `apps\gatsbyapp\public\static\d`, but the resolver uses wrong path.
 
-> You can also use any of the plugins above to generate libraries as well.
-
-Libraries are sharable across libraries and applications. They can be imported from `@happyorg/mylib`.
-
-## Development server
-
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
-
-## Build
-
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.
