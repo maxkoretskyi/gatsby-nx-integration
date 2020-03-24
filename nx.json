@@ -10,5 +10,20 @@
     "tslint.json": "*",
     "nx.json": "*"
   },
-  "projects": {}
+  "projects": {
+    "reactapp": {
+      "tags": []
+    },
+    "reactapp-e2e": {
+      "tags": [],
+      "implicitDependencies": ["reactapp"]
+    },
+    "nextapp": {
+      "tags": []
+    },
+    "nextapp-e2e": {
+      "tags": [],
+      "implicitDependencies": ["nextapp"]
+    }
+  }
 }

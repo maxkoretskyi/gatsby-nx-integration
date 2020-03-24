@@ -1,8 +1,211 @@
 {
   "version": 1,
-  "projects": {},
+  "projects": {
+    "reactapp": {
+      "root": "apps/reactapp",
+      "sourceRoot": "apps/reactapp/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/reactapp",
+            "index": "apps/reactapp/src/index.html",
+            "main": "apps/reactapp/src/main.ts",
+            "polyfills": "apps/reactapp/src/polyfills.ts",
+            "tsConfig": "apps/reactapp/tsconfig.app.json",
+            "assets": [
+              "apps/reactapp/src/favicon.ico",
+              "apps/reactapp/src/assets"
+            ],
+            "styles": ["apps/reactapp/src/styles.css"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/reactapp/src/environments/environment.ts",
+                  "with": "apps/reactapp/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "reactapp:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "reactapp:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/reactapp/.eslintrc",
+            "tsConfig": [
+              "apps/reactapp/tsconfig.app.json",
+              "apps/reactapp/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/reactapp/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/reactapp/jest.config.js",
+            "tsConfig": "apps/reactapp/tsconfig.spec.json",
+            "passWithNoTests": true,
+            "setupFile": "apps/reactapp/src/test-setup.ts"
+          }
+        }
+      }
+    },
+    "reactapp-e2e": {
+      "root": "apps/reactapp-e2e",
+      "sourceRoot": "apps/reactapp-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/reactapp-e2e/cypress.json",
+            "tsConfig": "apps/reactapp-e2e/tsconfig.e2e.json",
+            "devServerTarget": "reactapp:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "reactapp:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/reactapp-e2e/.eslintrc",
+            "tsConfig": ["apps/reactapp-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/reactapp-e2e/**"]
+          }
+        }
+      }
+    },
+    "nextapp": {
+      "root": "apps/nextapp",
+      "sourceRoot": "apps/nextapp",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/nextapp",
+            "outputPath": "dist/apps/nextapp"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "nextapp:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "nextapp:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "nextapp:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/nextapp/.eslintrc",
+            "tsConfig": [
+              "apps/nextapp/tsconfig.json",
+              "apps/nextapp/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/nextapp/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/nextapp/jest.config.js",
+            "tsConfig": "apps/nextapp/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nextapp-e2e": {
+      "root": "apps/nextapp-e2e",
+      "sourceRoot": "apps/nextapp-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/nextapp-e2e/cypress.json",
+            "tsConfig": "apps/nextapp-e2e/tsconfig.e2e.json",
+            "devServerTarget": "nextapp:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "nextapp:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/nextapp-e2e/.eslintrc",
+            "tsConfig": ["apps/nextapp-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/nextapp-e2e/**"]
+          }
+        }
+      }
+    }
+  },
   "cli": {
-    "defaultCollection": "@nrwl/workspace"
+    "defaultCollection": "@nrwl/web"
   },
   "schematics": {
     "@nrwl/workspace": {
@@ -17,14 +220,13 @@
     },
     "@nrwl/react": {
       "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
+        "linter": "eslint",
+        "babel": true
       }
     },
     "@nrwl/next": {
       "application": {
+        "style": "css",
         "linter": "eslint"
       }
     },
@@ -56,5 +258,6 @@
         "linter": "eslint"
       }
     }
-  }
+  },
+  "defaultProject": "reactapp"
 }
