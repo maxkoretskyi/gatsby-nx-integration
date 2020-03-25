@@ -5,6 +5,8 @@ Just execute the build script in `scripts`:
 $ node scripts/build-gatsby
 ``` 
 
+Debugging child processes in Gatsby is described [in this article](https://indepth.dev/how-to-debug-a-child-process-in-node-and-gatsby-js-with-chrome/).
+
 ### Findings
 
 - The `directory` property of the `program` argument passed to the `build` command should have the path to the gatsby app inside the workspace:
